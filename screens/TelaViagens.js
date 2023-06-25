@@ -9,21 +9,20 @@ export function TelaViagens() {
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(true);
   
-
+  function fetchHistoricoCarona() {
+    setRefreshing(true);
+    api.get('Carona/historico')
+      .then(resJson => {
+        setData(resJson.data);
+        setRefreshing(false);
+      })
+      .catch(e => {
+        setRefreshing(false);
+      });
+  }
 
   useEffect(() => {
-    function fetchToken() {
-      setRefreshing(true);
-      api.get('Carona/historico')
-        .then(resJson => {
-          setData(resJson.data);
-          setRefreshing(false);
-        })
-        .catch(e => {
-          setRefreshing(false);
-        });
-    }
-    fetchToken();
+    fetchHistoricoCarona();
   }, []);
 
   const ItemSeparator = () => (
@@ -34,6 +33,17 @@ export function TelaViagens() {
       marginRight: 5,
     }} />
   );
+
+  function excluirCarona(crn_id){
+    api.delete('Carona/cancelar/'+crn_id)
+        .then(resJson => {
+          fetchHistoricoCarona();
+          setRefreshing(false);
+        })
+        .catch(e => {
+          setRefreshing(false);
+        });
+  }
 
   const handleRefresh = () => {
     setRefreshing(false);
@@ -61,7 +71,7 @@ export function TelaViagens() {
         </View>
         <TouchableOpacity
           style={{ position:"absolute", right:5, top:5}}
-          onPress={() => { alert(item.crn_saida); }}
+          onPress={() => { excluirCarona(item.crn_id) }}
         >
           <AntDesign name="closecircle" size={24} color="#374957"/>
         </TouchableOpacity>
