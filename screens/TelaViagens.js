@@ -4,10 +4,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { api } from "../utils/api";
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 
+import { useContext } from 'react';
+import { CaronasContext } from '../context/caronasContext';
+
 
 export function TelaViagens() {
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(true);
+
+  const { minhasCaronas } = useContext(CaronasContext);
   
   function fetchHistoricoCarona() {
     setRefreshing(true);
@@ -23,7 +28,7 @@ export function TelaViagens() {
 
   useEffect(() => {
     fetchHistoricoCarona();
-  }, []);
+  }, [minhasCaronas]);
 
   const ItemSeparator = () => (
     <View style={{

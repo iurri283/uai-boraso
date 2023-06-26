@@ -5,12 +5,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import { useContext } from 'react';
 import { AuthContext } from '../context/authContext';
+import { CaronasContext } from '../context/caronasContext';
 
 export function TelaListarCaronas() {
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(true);
 
   const { dadosUsuario } = useContext(AuthContext);
+  const { setMinhasCaronas } = useContext(CaronasContext);
 
   function fetchCarona() {
     setRefreshing(true);
@@ -42,12 +44,13 @@ export function TelaListarCaronas() {
   };
 
   function entrarCarona(crn_id){
-    console.log(crn_id, dadosUsuario.usu_id);
+    // console.log(crn_id, dadosUsuario.usu_id);
     api.post('Carona_has_Usuario/add_passageiro/'+crn_id, {
       usu_id: dadosUsuario.usu_id
     })
         .then(resJson => {
           fetchCarona();
+          setMinhasCaronas(crn_id);
           setRefreshing(false);
         })
         .catch(e => {
