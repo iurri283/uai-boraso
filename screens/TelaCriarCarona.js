@@ -6,6 +6,40 @@ import { useState } from 'react';
 export function TelaCriarCarona() {
   const [mensagem, setMensagem] = useState('');
 
+  const [saida, setSaida] = useState('');
+  const [destino, setDestino] = useState('');
+  const [data, setData] = useState('');
+  const [horario, setHorario] = useState('');
+  const [numVagas, setNumVagas] = useState();
+  const [preco, setPreco] = useState(0.0);
+  const [observacoes, setObservacoes] = useState('');
+
+  function cadastrarCarona() {
+
+    
+
+    var userObj = {
+      crn_saida: saida,
+      crn_destino: destino,
+      crn_data_horario: dataHorario,
+      crn_num_vagas: parseInt(numVagas),
+      crn_preco: parseFloat(preco),
+      crn_observacoes: observacoes
+    };
+
+    var jsonBody = JSON.stringify(userObj);
+
+    api.post('Carona/cadastrar', jsonBody)
+      .then(resJson => {
+        console.log(resJson.data);
+        setData(resJson.data);
+        setRefreshing(false);
+      })
+      .catch(e => {
+        setRefreshing(false);
+      });
+  }
+
   return (
     <LinearGradient
       style={estilo.fundo}
@@ -28,49 +62,61 @@ export function TelaCriarCarona() {
           <TextInput
             style={estilo.inputForm}
             placeholderTextColor="white"
-            placeholder="nome"
-            autoCompleteType="name"
+            placeholder="saida"
             autoCapitalize="none"
             autoCorrect={true}
-            onChangeText={(event) => setNome(event)}
+            onChangeText={(event) => setSaida(event)}
           />
 
           <TextInput
             style={estilo.inputForm}
             placeholderTextColor="white"
-            placeholder="email"
-            autoCompleteType="email"
+            placeholder="destino"
             autoCapitalize="none"
             autoCorrect={true}
-            onChangeText={(event) => setEmail(event)}
+            onChangeText={(event) => setDestino(event)}
           />
 
           <TextInput
             style={estilo.inputForm}
             placeholderTextColor="white"
-            placeholder="cpf"
+            placeholder="data"
             autoCapitalize="none"
             autoCorrect={true}
-            onChangeText={(event) => setCpf(event)}
+            onChangeText={(event) => setData(event)}
           />
 
           <TextInput
             style={estilo.inputForm}
             placeholderTextColor="white"
-            placeholder="Telefone"
-            autoCompleteType="tel"
+            placeholder="horario"
             autoCapitalize="none"
-            onChangeText={(event) => setTelefone(event)}
+            autoCorrect={true}
+            onChangeText={(event) => setHorario(event)}
           />
 
           <TextInput
             style={estilo.inputForm}
             placeholderTextColor="white"
-            placeholder="Senha"
-            autoCompleteType="current-password"
+            placeholder="número de Vagas"
             autoCapitalize="none"
-            secureTextEntry={true}
-            onChangeText={(event) => setSenha(event)}
+            onChangeText={(event) => setNumVagas(event)}
+          />
+
+          <TextInput
+            style={estilo.inputForm}
+            placeholderTextColor="white"
+            placeholder="Preço"
+            autoCapitalize="none"
+            onChangeText={(event) => setPreco(event)}
+          />
+
+          <TextInput
+            style={estilo.inputForm}
+            placeholderTextColor="white"
+            placeholder="Observações"
+            autoCapitalize="none"
+            onChangeText={(event) => setObservacoes(event)}
           />
 
           <TouchableOpacity
@@ -118,8 +164,7 @@ const estilo = StyleSheet.create({
     width: 250,
     height: 35,
     borderRadius: 5,
-    padding: 5,
-    opacity: '.5'
+    padding: 5
   },
   teste: {
     marginTop: 90,
