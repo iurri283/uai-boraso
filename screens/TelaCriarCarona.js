@@ -1,7 +1,13 @@
 import { View, StyleSheet, Text, Image, TextInput, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from '../styles/style';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import { api } from "../utils/api";
+
+import { useContext } from 'react';
+import { AuthContext } from '../context/authContext';
+import { CaronasContext } from '../context/caronasContext';
 
 export function TelaCriarCarona() {
   const [mensagem, setMensagem] = useState('');
@@ -10,35 +16,39 @@ export function TelaCriarCarona() {
   const [destino, setDestino] = useState('');
   const [data, setData] = useState('');
   const [horario, setHorario] = useState('');
+  // const [dataHorario, setDataHorario] = useState('');
   const [numVagas, setNumVagas] = useState();
   const [preco, setPreco] = useState(0.0);
   const [observacoes, setObservacoes] = useState('');
+  const [refreshing, setRefreshing] = useState(true);
+
+  const { dadosUsuario } = useContext(AuthContext);
+  const { setMinhasCaronas } = useContext(CaronasContext);
+
 
   function cadastrarCarona() {
-
     
+    const dataFormatada = data.split('/').reverse().join('-');
 
-    var userObj = {
+    api.post('Carona/cadastrar', {
       crn_saida: saida,
       crn_destino: destino,
-      crn_data_horario: dataHorario,
+      crn_data_horario: `${dataFormatada}T${horario}`,
       crn_num_vagas: parseInt(numVagas),
       crn_preco: parseFloat(preco),
       crn_observacoes: observacoes
-    };
-
-    var jsonBody = JSON.stringify(userObj);
-
-    api.post('Carona/cadastrar', jsonBody)
+    })
       .then(resJson => {
         console.log(resJson.data);
-        setData(resJson.data);
+        setMinhasCaronas(resJson.data.crn_id);
         setRefreshing(false);
       })
       .catch(e => {
         setRefreshing(false);
       });
+
   }
+
 
   return (
     <LinearGradient
@@ -121,7 +131,7 @@ export function TelaCriarCarona() {
 
           <TouchableOpacity
             style={estilo.buttonForm}
-            onPress={() => verificaCadastro()}>
+            onPress={() => cadastrarCarona()}>
             <Text style={estilo.textButton}>Cadastrar</Text>
           </TouchableOpacity>
 
