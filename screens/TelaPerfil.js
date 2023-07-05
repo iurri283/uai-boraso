@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 
+import { api } from "../utils/api";
+import { useContext } from 'react';
+import { AuthContext } from '../context/authContext';
+
 export function TelaPerfil() {
 
   const [mensagem, setMensagem] = useState('');
@@ -10,13 +14,35 @@ export function TelaPerfil() {
   const [telefone, setTelefone] = useState('');
   const [senha, setSenha] = useState('');
 
+  const { dadosUsuario, setDadosUsuario } = useContext(AuthContext);
+  
+
 
   function atualizarUsuario(){
-
-  }
-
-  function getUsuario(){
-    
+    api.put('usu_editarInfo/:'+dadosUsuario.usu_id, {
+      usu_nome: nome,
+      usu_email: email,
+      usu_telefone: parseInt(telefone),
+      usu_senha: senha
+    })
+      .then(resJson => {
+        if(resJson.data.affectedRows == 1){
+          setMensagem("Usuario atualizado com sucesso!");
+          setDadosUsuario({
+            usu_nome: nome,
+            usu_email: email,
+            usu_cpf: dadosUsuario.usu_cpf,
+            usu_telefone: telefone,
+            usu_senha: senha
+          });
+        }else{
+          setMensagem("Erro ao atualizar usuário!");
+        }
+        setRefreshing(false);
+      })
+      .catch(e => {
+        setRefreshing(false);
+      });
   }
 
   return (
@@ -37,6 +63,7 @@ export function TelaPerfil() {
           autoCapitalize="none"
           autoCorrect={true}
           onChangeText={(event) => setNome(event)}
+          value={dadosUsuario.usu_nome}
         />
 
         <TextInput
@@ -46,6 +73,7 @@ export function TelaPerfil() {
           autoCapitalize="none"
           autoCorrect={true}
           onChangeText={(event) => setEmail(event)}
+          value={dadosUsuario.usu_email}
         />
 
         <View style={estilo.inputMenor}>
@@ -56,6 +84,7 @@ export function TelaPerfil() {
             autoCapitalize="none"
             autoCorrect={true}
             onChangeText={(event) => setTelefone(event)}
+            value={dadosUsuario.usu_telefone.toString()}
           />
 
           <TextInput
@@ -66,6 +95,7 @@ export function TelaPerfil() {
             autoCapitalize="none"
             secureTextEntry={true}
             onChangeText={(event) => setSenha(event)}
+            value={dadosUsuario.usu_senha}
           />
         </View>
         <TouchableOpacity

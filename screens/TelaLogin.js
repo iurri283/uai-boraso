@@ -30,6 +30,7 @@ export function TelaLogin({ navigation }) {
     if (token) {
       api.defaults.headers.common['Authorization'] = token;
       setDadosUsuario(data);
+      // console.log(data);
       handleTokenLogin(token);
       setMensagem('Login efetuado!');
     } else {
