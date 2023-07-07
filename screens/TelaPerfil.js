@@ -8,25 +8,41 @@ import { AuthContext } from '../context/authContext';
 
 export function TelaPerfil() {
 
-  const [mensagem, setMensagem] = useState('');
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [senha, setSenha] = useState('');
-
   const { dadosUsuario, setDadosUsuario } = useContext(AuthContext);
+
+  const [mensagem, setMensagem] = useState('');
+  const [nome, setNome] = useState(dadosUsuario.usu_nome);
+  const [email, setEmail] = useState(dadosUsuario.usu_email);
+  const [telefone, setTelefone] = useState(dadosUsuario.usu_telefone);
+  const [senha, setSenha] = useState(dadosUsuario.usu_senha);
+
+  const [refreshing, setRefreshing] = useState(true);
+
+  
   
 
 
   function atualizarUsuario(){
-    api.put('usu_editarInfo/:'+dadosUsuario.usu_id, {
+
+    console.log(dadosUsuario.usu_id);
+    console.log(nome);
+    console.log(email);
+    console.log(telefone);
+    console.log(senha);
+
+    var userObj = {
       usu_nome: nome,
       usu_email: email,
       usu_telefone: parseInt(telefone),
       usu_senha: senha
-    })
+    };
+
+    var jsonBody = JSON.stringify(userObj);
+
+    api.put('usu_editarInfo/'+dadosUsuario.usu_id, userObj)
       .then(resJson => {
-        if(resJson.data.affectedRows == 1){
+        console.log(resJson.data);
+        if(resJson.data.affectedRows > 0){
           setMensagem("Usuario atualizado com sucesso!");
           setDadosUsuario({
             usu_nome: nome,
@@ -35,6 +51,7 @@ export function TelaPerfil() {
             usu_telefone: telefone,
             usu_senha: senha
           });
+          setRefreshing(false);
         }else{
           setMensagem("Erro ao atualizar usuário!");
         }
@@ -54,7 +71,7 @@ export function TelaPerfil() {
       />
       <View style={estilo.formCadastro}>
 
-        <Text style={estilo.tituloForm}>Cadastro de Carona</Text>
+        <Text style={estilo.tituloForm}>Dados Pessoais</Text>
 
         <TextInput
           style={estilo.inputForm}
@@ -63,7 +80,7 @@ export function TelaPerfil() {
           autoCapitalize="none"
           autoCorrect={true}
           onChangeText={(event) => setNome(event)}
-          value={dadosUsuario.usu_nome}
+          defaultValue={dadosUsuario.usu_nome}
         />
 
         <TextInput
@@ -73,7 +90,7 @@ export function TelaPerfil() {
           autoCapitalize="none"
           autoCorrect={true}
           onChangeText={(event) => setEmail(event)}
-          value={dadosUsuario.usu_email}
+          defaultValue={dadosUsuario.usu_email}
         />
 
         <View style={estilo.inputMenor}>
@@ -84,7 +101,7 @@ export function TelaPerfil() {
             autoCapitalize="none"
             autoCorrect={true}
             onChangeText={(event) => setTelefone(event)}
-            value={dadosUsuario.usu_telefone.toString()}
+            defaultValue={dadosUsuario.usu_telefone.toString()}
           />
 
           <TextInput
@@ -95,13 +112,13 @@ export function TelaPerfil() {
             autoCapitalize="none"
             secureTextEntry={true}
             onChangeText={(event) => setSenha(event)}
-            value={dadosUsuario.usu_senha}
+            defaultValue={dadosUsuario.usu_senha}
           />
         </View>
         <TouchableOpacity
           style={estilo.buttonForm}
           onPress={() => atualizarUsuario()}>
-          <Text style={estilo.textButton}>Cadastrar</Text>
+          <Text style={estilo.textButton}>Atualizar</Text>
         </TouchableOpacity>
 
         <Text style={styles.textAlert}>{mensagem}</Text>

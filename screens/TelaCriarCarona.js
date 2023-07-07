@@ -41,6 +41,7 @@ export function TelaCriarCarona() {
     })
       .then(resJson => {
         console.log(resJson.data);
+        setMensagem(resJson.data.mensagem);
         setMinhasCaronas(resJson.data.crn_id);
         setRefreshing(false);
       })

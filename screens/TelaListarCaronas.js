@@ -12,7 +12,7 @@ export function TelaListarCaronas() {
   const [refreshing, setRefreshing] = useState(true);
 
   const { dadosUsuario } = useContext(AuthContext);
-  const { setMinhasCaronas } = useContext(CaronasContext);
+  const { minhasCaronas, setMinhasCaronas } = useContext(CaronasContext);
 
   function fetchCarona() {
     setRefreshing(true);
@@ -28,7 +28,7 @@ export function TelaListarCaronas() {
 
   useEffect(() => {
     fetchCarona();
-  }, []);
+  }, [minhasCaronas]);
 
   const ItemSeparator = () => (
     <View style={{
